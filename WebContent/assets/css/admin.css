@@ -1,0 +1,207 @@
+* {
+	color: black;
+	font-family: "microsoft yahei";
+	font-size: 15px;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+}
+
+i {
+	color: white;
+}
+
+label{
+	display:inline;
+}
+
+/* 头部 --start */
+
+/* 头部下拉菜单--start */
+
+/*  头部导航  */
+.top_navi {
+	width: 100%;
+	height: 50px;
+	padding-top: 5px;
+	background: #39A4DC;
+}
+
+/*  头部导航内容  */
+.top_navi_cont {
+	width: 1000px;
+	height: 40px;
+	margin: 0px auto;
+}
+
+.nav_title {
+	display: block;
+	float: left;
+	font-size: 20px;
+	margin: 5px 20px 5px 0px;
+}
+
+.top_navi_cont_ul {
+	display: inline-block;
+	list-style: none;
+}
+
+.top_navi_cont_ul>li {
+	width: auto;
+	height: 40px;
+	float: left;
+	color: white;
+	line-height: 40px;
+	margin: 0 10px 0 10px;
+}
+
+.top_navi_cont_ul>li>a, span {
+	width: auto;
+	height: 30px;
+	text-align: center;
+	color: white;
+	font-size: 15px;
+}
+
+.top_nav_left {
+	float: left;
+}
+
+.top_nav_right {
+	float: right;
+}
+
+.top_title_cont {
+	width: 1200px;
+	margin: 40px auto 40px;
+}
+
+#top_title {
+	font-size: 25px;
+	color: black;
+}
+
+.container {
+	width: 1100px;
+	margin: 0 auto;
+}
+.ui-table td, .ui-table th{
+	padding:0 15px;
+}
+
+/* 主页面  */
+.instruction {
+	display: block;
+	float: left;
+	width: 30%;
+	margin-left: 30px;
+}
+
+.ins {
+	
+}
+
+/* 教师管理  */
+.addTeacher {
+	
+}
+
+.teachers {
+	margin-top: 40px;
+}
+
+/* 教师管理  */
+
+/* 教师修改 */
+.modify_title {
+	font-size: 20px;
+}
+
+.modify_tr {
+	display: block;
+	margin-bottom: 20px;
+}
+
+.modify_td1 {
+	width: 100px;
+	height: 30px;
+	text-align: right;
+}
+
+.modify_td2 {
+	width: 250px;
+	height: 30px;
+}
+
+/*提交按钮*/
+#modify_submit {
+	width: 60px;
+	text-align: center;
+	background: #39A4DC;
+	color: white;
+}
+
+/* 教师修改 */
+
+/* 考试清理 */
+
+/* 考试清理 */
+
+/* 系统配置 */
+.config_div_wrapper {
+	margin-bottom: 20px;
+	width: 1000px;
+}
+
+.config_div_wrapper2 {
+	margin-left: 220px;
+}
+
+.config_label {
+	float: left;
+	text-align: right;
+	width: 200px;
+	margin-top: 9px;
+}
+
+#input2 {
+	
+}
+
+.input3 {
+	width: 300px;
+	padding: 5px 4px;
+	margin-bottom: 10px;
+}
+/*  分页 */
+
+ul.pagination {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+ul.pagination li {display: inline;}
+
+ul.pagination li a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    border: 1px solid #ddd; /* Gray */
+}
+
+ul.pagination li a.active {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+}
+
+ul.pagination li a:hover:not(.active) {background-color: #ddd;}
+
+
+
+/* 系统配置 */

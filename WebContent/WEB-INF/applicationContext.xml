@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<!-- 定义数据源Bean，使用C3P0数据源实现 -->
+	<!-- 并设置连接数据库的驱动、URL、用户名、密码， 连接池最大连接数、最小连接数、初始连接数等参数 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close" p:driverClass="com.mysql.jdbc.Driver"
+		p:jdbcUrl="jdbc:mysql://localhost:3306/cxxm" 
+		p:user="root" 
+		p:password="926322"
+		p:maxPoolSize="200" p:minPoolSize="2" p:initialPoolSize="2"
+		p:maxIdleTime="20" />
+	<!-- 定义Hibernate的SessionFactory，并依赖注入数据源，注入上面定义的dataSource -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+		p:dataSource-ref="dataSource">
+		<!-- annotatedClasses属性用于列出全部持久化类 -->
+		<property name="annotatedClasses">
+			<list>
+				<!-- 以下用来列出Hibernate的持久化类 -->
+				<value>vo.Answer</value>
+				<value>vo.Binding</value>
+				<value>vo.Exam</value>
+				<value>vo.Student</value>
+				<value>vo.Simg</value>
+				<value>vo.Teacher</value>
+			</list>
+		</property>
+		<!-- 定义Hibernate的SessionFactory的属性 -->
+		<property name="hibernateProperties">
+			<!-- 指定数据库方言、是否自动建表、是否生成SQL语句等 -->
+			<value>
+				hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+				hibernate.hbm2ddl.auto=update
+				hibernate.show_sql=false
+				hibernate.format_sql=true
+				#开启二级缓存
+				hibernate.cache.use_second_level_cache=true
+				#设置二级缓存的提供者
+				hibernate.cache.region.factory_class=org.hibernate.cache.ehcache.EhCacheRegionFactory
+			</value>
+		</property>
+	</bean>
+
+	<!-- 配置DAO组件的模板 -->
+	<bean id="daoTemplate" abstract="true" lazy-init="true"
+		p:sessionFactory-ref="sessionFactory" />
+
+	<bean id="baseDAO" class="dao.impl.BaseDAOImpl" parent="daoTemplate" />
+
+	<bean id="answerDAO" class="dao.impl.AnswerDAOImpl" parent="daoTemplate" />
+	
+	<bean id="simgDAO" class="dao.impl.SimgDAOImpl" parent="daoTemplate" />
+	
+	<bean id="bindingDAO" class="dao.impl.BindingDAOImpl" parent="daoTemplate" />
+
+	<bean id="examDAO" class="dao.impl.ExamDAOImpl" parent="daoTemplate" />
+
+	<bean id="studentDAO" class="dao.impl.StudentDAOImpl" parent="daoTemplate" />
+
+	<bean id="teacherDAO" class="dao.impl.TeacherDAOImpl" parent="daoTemplate" />
+
+	<!-- 定义业务逻辑组件 -->
+	<!-- Action会查询下列bean，在action实例中使用bean -->
+	<bean id="sManager" class="service.impl.StudentManagerImpl"
+		p:studentDAO-ref="studentDAO" p:examDAO-ref="examDAO"/>
+	<bean id="aManager" class="service.impl.AnswerManagerImpl"
+		p:answerDAO-ref="answerDAO" />
+	<bean id="bManager" class="service.impl.BindingManagerImpl"
+		p:bindingDAO-ref="bindingDAO" />
+	<bean id="eManager" class="service.impl.ExamManagerImpl"
+		p:examDAO-ref="examDAO" p:teacherDAO-ref="teacherDAO" p:answerDAO-ref="answerDAO"
+		p:studentDAO-ref="studentDAO" p:bindingDAO-ref="bindingDAO" />
+	<bean id="tManager" class="service.impl.TeacherManagerImpl"
+		p:teacherDAO-ref="teacherDAO" />
+	
+	<bean id="iManager" class="service.impl.SimgManagerImpl"
+		p:simgDAO-ref="simgDAO"/>	
+			
+	
+	<bean id="examListener" class="listener.ExamListener"
+		p:eManager-ref="eManager" />
+ 	
+	<bean id="actionContext"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+		p:targetClass="com.opensymphony.xwork2.ActionContext"
+		 p:staticMethod="com.opensymphony.xwork2.ActionContext.getContext" />
+
+
+	<!-- <bean id="session" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"> 
+		<property name="targetObject" ref="actionContext" /> <property name="targetMethod" 
+		value="getSession" /> </bean> -->
+
+	<!-- -->
+	<!-- <bean id="baseAction" class="action.BaseAction">
+		<property name="session">
+			<bean
+				class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+				<property name="targetObject" ref="actionContext" />
+				<property name="targetMethod" value="getSession" />
+			</bean>
+		</property>
+	</bean> -->
+
+	<!-- <bean id="session" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" 
+		p:targetObject-ref="actionContext" p:targetMethod="getSession" /> -->
+
+
+
+	<!-- 不配置事务，无法获取session -->
+	<!-- 配置Hibernate的局部事务管理器，使用HibernateTransactionManager类 并注入SessionFactory的引用 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+		p:sessionFactory-ref="sessionFactory" />
+	<!-- 配置事务增强处理Bean,指定事务管理器 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<!-- 用于配置详细的事务语义 -->
+		<tx:attributes>
+			<!-- 所有以'get'开头的方法是read-only的 -->
+			<tx:method name="get*" read-only="true" />
+			<!-- 其他方法使用默认的事务设置 -->
+			<tx:method name="*" />
+		</tx:attributes>
+	</tx:advice>
+	
+	
+	<aop:config>
+		<!-- 配置一个切入点，匹配empManager和mgrManager 两个Bean的所有方法的执行 -->
+		<aop:pointcut id="leePointcut" expression="bean(sManager) || bean(tManager) || bean(aManager) || bean(iManager) || bean(bManager) || bean(eManager)" />
+		<!-- 指定在leePointcut切入点应用txAdvice事务增强处理 -->
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="leePointcut" />
+	</aop:config>
+
+</beans>

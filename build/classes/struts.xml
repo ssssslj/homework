@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<!-- <constant name="struts.devMode" value="true" /> -->
+	<!-- 指定全局国际化资源文件 -->
+	<constant name="struts.custom.i18n.resources" value="mess_zh_CN"></constant>
+    <constant name="struts.multipart.maxSize" value="100000000" /> 
+	<package name="StrutsTest" namespace="/" extends="struts-default">
+	
+	<interceptors>
+			<!-- 配置权限检查拦截器 -->
+			<interceptor name="authInterceptor"	class=
+			"interceptor.AuthorityInterceptor"/>
+			
+			<!-- 配置拦截器栈 -->
+			<interceptor-stack name="authorStack">
+				<interceptor-ref name="defaultStack"/>
+				<interceptor-ref name="authInterceptor"/>
+			</interceptor-stack>
+			
+		</interceptors>
+	
+	<default-interceptor-ref name="authorStack"/>
+	
+	<!-- 定义全局Result映射 -->
+		<global-results>
+			
+			<result name="login">/WEB-INF/jsp/loginpage.jsp</result>
+		</global-results>
+
+		<!-- <action name="*"> <result>/WEB-INF/content/{1}.jsp</result> </action> -->
+	<!-- 登录 -->
+		<!-- 登录页面 -->
+		<action name="loginPage" class="action.StudentLoginAction" method="getLoginPage">		
+			
+			<result name="success">/WEB-INF/jsp/loginpage.jsp</result>
+		</action>
+		
+		<action name="face_compare" class="action.SimgAction" method="login">		
+			<result name="success">/WEB-INF/jsp/student/main.jsp</result>
+			<result name="input">/WEB-INF/jsp/face.jsp</result>
+			<result name="error">/WEB-INF/jsp/face.jsp</result>
+		</action>
+		
+		<!-- 学生登录 -->
+		<action name="student_login" class="action.StudentLoginAction" method="login">	
+			<interceptor-ref name="defaultStack"/>
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/loginpage.jsp</result>	
+			<!-- <result name="success">/WEB-INF/jsp/student/main.jsp</result> -->
+			<result name="success">/WEB-INF/jsp/face.jsp</result>
+		</action>
+		
+		<!-- 教师登录 -->
+		<action name="teacher_login" class="action.TeacherLoginAction" method="loginTeacher">	
+		<interceptor-ref name="defaultStack"/>
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="success">/WEB-INF/jsp/teacher/main.jsp</result>
+			<!-- <result name="success">/WEB-INF/jsp/face.jsp</result> -->
+		</action>
+		
+		<!-- 管理员登录 -->
+		<action name="admin_login" class="action.TeacherLoginAction" method="loginAdmin">	
+			<interceptor-ref name="defaultStack"/>
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/main.jsp</result>
+			
+		</action>
+
+		
+		
+		
+	<!-- 管理员页面 -->
+		<!-- 首页 -->
+		<action name="admin_main" class="action.AdminExamAction" method="adminMainPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/main.jsp</result>
+		</action>
+		
+		<!-- 教师管理 -->
+		<action name="admin_teacher" class="action.AdminTeacherAction" method="adminTeacherPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/teacher.jsp</result>
+		</action>
+		
+		<!-- 查询教师 -->
+		<action name="admin_serachTeacher" class="action.AdminTeacherAction" method="serachTeacher">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/teacher.jsp</result>
+		</action>
+		
+		
+		
+		<!-- 添加教师 -->
+		<action name="admin_addTeacher" class="action.AdminTeacherAction" method="addTeacher">	
+			
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success" type="redirect">admin_teacher</result>
+		</action>
+		
+		<!-- 教师信息修改 页面-->
+		<action name="admin_modifyTeacher" class="action.AdminTeacherAction" method="modifyTeacherPage">			
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/teacher_modify.jsp</result>
+		</action>
+		
+		<!-- 更新教师信息-->
+		<action name="admin_updateTeacher" class="action.AdminTeacherAction" method="updateTeacher">			
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success" type="redirect">admin_teacher</result>
+		</action>
+		
+		<!-- 删除教师信息-->
+		<action name="admin_deleteTeacher" class="action.AdminTeacherAction" method="deleteTeacher">			
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success" type="redirect">admin_teacher</result>
+		</action>
+		
+		<!-- 考试清理页面-->
+		<action name="admin_exam" class="action.AdminExamAction" method="adminExamPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/exam.jsp</result>
+		</action>
+		
+		<!-- 清理考试-->
+		<action name="admin_cleanExam" class="action.AdminExamAction" method="cleanExam">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success" type="redirect">admin_exam</result>
+		</action>
+		
+		<!-- 删除考试-->
+		<action name="admin_deleteExam" class="action.AdminExamAction" method="deleteExam">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success" type="redirect">admin_exam</result>
+		</action>
+		
+		<!-- 系统配置页面 -->
+		<action name="admin_config" class="action.AdminConfigAction" method="adminConfigPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/config.jsp</result>
+		</action>
+		<action name="admin_config1" class="action.AdminConfigAction" method="setadminConfigPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/config.jsp</result>
+		</action>
+		
+		<!-- 修改密码 -->
+		<action name="admin_resetPassword" class="action.AdminConfigAction" method="resetPassword">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/main.jsp</result>
+		</action>
+		
+		
+		
+		<!-- 管理员退出 -->
+		<action name="admin_exit" class="action.TeacherExitAction" method="adminExit">	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success" type="redirect">loginPage</result>
+		</action>
+		
+	<!-- 教师页面 -->
+		<!-- 首页 -->
+		<action name="teacher_main" class="action.TeacherExamAction" method="teacherMainPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/teacher/main.jsp</result>
+		</action>
+		
+		<!-- 考前操作页面 -->
+		<action name="teacher_exam_before" class="action.TeacherExamAction" method="teacherExamBeforePage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/teacher/exam_before.jsp</result>
+		</action>
+		
+		
+		
+	<!-- 考中操作 -->
+		<!-- 考试概况 页面-->
+		<action name="teacher_manage_summary" class="action.TeacherManageAction" method="teacherManageSummaryPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/teacher/manage_summary.jsp</result>
+		</action>
+		<!-- 学生信息页面 -->
+		<action name="teacher_manage_student" class="action.TeacherManageAction" method="teacherManageStudentPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/teacher/manage_student.jsp</result>
+		</action>
+		
+		<!-- 解除绑定页面 -->
+		<action name="teacher_manage_unlock" class="action.TeacherManageAction" method="teacherManageUnlockPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/teacher/manage_unlock.jsp</result>
+		</action>
+		
+		<!-- 通知管理页面 -->
+		<action name="teacher_manage_notify" class="action.TeacherManageAction" method="teacherManageNotifyPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/teacher/manage_notify.jsp</result>
+		</action>
+		
+		<!-- 添加通知 -->
+		<action name="teacher_manage_notify_add" class="action.TeacherManageAction" method="teacherManageNotifyAddPage">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success" type="redirect">teacher_manage_notify</result>
+		</action>
+				
+		<!-- 删除通知 -->
+		<action name="teacher_manage_notify_del" class="action.TeacherManageAction" method="teacherManageNotifyDeletePage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success" type="redirect">teacher_manage_notify</result>
+		</action>
+				
+		<!--已登录学生数量页面 -->
+		<action name="teacher_manage_showbind" class="action.TeacherManageAction" method="teacherManageShowbindPage">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success">/WEB-INF/jsp/teacher/manage_showbind.jsp</result>
+		</action>
+		<!--未登录学生数量页面 -->
+		<action name="teacher_manage_showunbind" class="action.TeacherManageAction" method="teacherManageShowUnbindPage">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success">/WEB-INF/jsp/teacher/manage_showunbind.jsp</result>
+		</action>
+		<!--已提交学生数量页面 -->
+		<action name="teacher_manage_showsubmit" class="action.TeacherManageAction" method="teacherManageShowSubmitPage">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success">/WEB-INF/jsp/teacher/manage_showsubmit.jsp</result>
+		</action>
+		<!--未提交学生数量页面 -->
+		<action name="teacher_manage_showunsubmit" class="action.TeacherManageAction" method="teacherManageShowUnsubmitPage">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success">/WEB-INF/jsp/teacher/manage_showunsubmit.jsp</result>
+		</action>
+		
+		<!--查询登录信息By学生-->
+		<action name="teacher_manage_serach_student" class="action.TeacherManageAction" method="getStudentByStudent">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success" >/WEB-INF/jsp/teacher/manage_unlock.jsp</result>
+		</action>
+		
+		<!--查询登录信息By学生-->
+		<action name="teacher_manage_serach_student2" class="action.TeacherManageAction" method="getStudentByStudent2">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success" >/WEB-INF/jsp/teacher/manage_student.jsp</result>
+		</action>
+		
+		<!--添加单个学生-->
+		<action name="teacher_manage_addStudent" class="action.TeacherManageAction" method="addStudent">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success" type="redirect">teacher_manage_serach_student2</result>
+		</action>
+		
+
+		
+		
+		
+		
+		<!--查询登录信息By_ip-->
+		<action name="teacher_manage_serach_ip" class="action.TeacherManageAction" method="getStudentByip">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success">/WEB-INF/jsp/teacher/manage_unlock.jsp</result>
+		</action>
+		
+		<!--解除绑定-->
+		<action name="teacher_manage_binding_delete" class="action.TeacherManageAction" method="deleteBinding">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success" type="redirect">teacher_manage_serach_ip</result>
+		</action>
+		
+		
+		
+		
+	<!-- 考后操作页面 -->
+		<action name="teacher_exam_after" class="action.TeacherExamAction" method="teacherExamAfterPage">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/teacher/exam_after.jsp</result>
+		</action>
+		
+		
+		<!-- 修改密码 -->
+		<action name="teacher_resetPassword" class="action.TeacherLoginAction" method="resetPassword">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success">/WEB-INF/jsp/admin/main.jsp</result>
+		</action>
+		
+		<!-- 教师退出 -->
+		<action name="teacher_exit" class="action.TeacherExitAction" method="teacherExit">	
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>	
+			<result name="error">/WEB-INF/jsp/error.jsp</result>	
+			<result name="success" type="redirect">loginPage</result>
+		</action>
+		
+		
+	<!--  考前信息管理 -->
+		
+		<!-- 添加考试 -->
+		<action name="teacher_addExam" class="action.TeacherExamAction" method="addExam">		
+			<result name="success" type="redirect">teacher_exam_before</result>
+		</action>
+		
+		<!-- 添加考试 -->
+		<action name="teacher_deleteExam" class="action.TeacherExamAction" method="deleteExam">		
+			<result name="success" type="redirect">teacher_exam_before</result>
+		</action>
+		
+		<!-- 编辑未开始的考试的信息 -->
+		<action name="teacher_editExam" class="action.TeacherExamAction" method="editExamPage">		
+			<result name="success">/WEB-INF/jsp/teacher/exam_modify.jsp</result>
+		</action>
+		
+		<!-- 更新考试信息 -->
+		<action name="teacher_updateExam" class="action.TeacherExamAction" method="updateExam">		
+			<result name="success">/WEB-INF/jsp/teacher/exam_modify.jsp</result>
+		</action>
+		
+		<!-- 导入试卷 -->
+		<action name="teacher_uploadExamPaper" class="action.TeacherExamAction" method="uploadExamPaper">		
+			<result name="success">/WEB-INF/jsp/teacher/exam_modify.jsp</result>
+			<result name="input">/WEB-INF/jsp/teacher/tipssss.jsp</result>
+		</action>
+		
+		<!-- 教师下载试卷-->
+
+		<action name="teacher_downloadExamPaper2" class="action.TeacherExamAction" method="downloadExamPaper2">
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename=${paperFileName}</param>
+				<param name="bufferSize">4096</param>
+			</result>
+		</action>
+		
+		<!-- 学生名单页面 -->
+		<action name="teacher_examStudentPage" class="action.TeacherStudentAction" method="examStudentPage">		
+			<result name="success">/WEB-INF/jsp/teacher/exam_student.jsp</result>
+		</action>
+		
+		
+		<!-- 导入学生名单 -->
+		<action name="teacher_importStudent" class="action.TeacherStudentAction" method="importStudent">		
+			<result name="success">/WEB-INF/jsp/teacher/exam_student.jsp</result>
+		</action>
+		
+		
+		<!--查询登录信息By学生-->
+		<action name="teacher_before_serach_student2" class="action.TeacherStudentAction" method="getStudentByStudent2">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success" >/WEB-INF/jsp/teacher/exam_student.jsp</result>
+		</action>
+		
+		<!--添加单个学生-->
+		<action name="teacher_before_addStudent" class="action.TeacherStudentAction" method="addStudent">
+			<result name="input">/WEB-INF/jsp/loginpage.jsp</result>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+			<result name="success" type="redirect">/teacher_before_serach_student2?exam.id=${exam.id}</result>
+		</action>
+		
+		<!-- 开始考试 -->
+		<action name="teacher_startExam" class="action.TeacherExamAction" method="startExam">		
+			<!-- <result name="success">/WEB-INF/jsp/teacher/exam_before.jsp</result> -->
+			<result name="success" type="redirect">teacher_exam_after</result>			
+		</action>
+		
+		<!-- 停止考试 -->
+		<action name="teacher_stopExam" class="action.TeacherExamAction" method="stopExam">		
+			<result name="success" type="redirect">teacher_exam_after</result>			
+		</action>
+		
+		<!-- 下载试卷 -->
+		<action name="teacher_downloadPaper" class="action.TeacherExamAction" method="downloadExamPapers">		
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">inputStream</param>
+<!-- 				<param name="contentDisposition">attachment;filename=${paperFileName}</param> -->
+				<param name="contentDisposition">attachment;filename=${zipName}</param>
+				<param name="bufferSize">4096</param>
+			</result>	
+			<result name="error" type="redirect">teacher_exam_after</result>			
+		</action>
+		
+		<!-- 下载提交信息 -->
+		<action name="teacher_downloadAnswers" class="action.TeacherExamAction" method="downloadAnswers">		
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename=${xlsName}</param>
+				<param name="bufferSize">4096</param>
+		</result>				
+		</action>
+		
+		
+		
+		<!-- 清理考试 -->
+		<action name="teacher_cleanExam" class="action.TeacherExamAction" method="cleanExam">		
+			<result name="success" type="redirect">teacher_exam_after</result>			
+		</action>
+		
+		<!-- 删除考试 -->
+		<action name="teacher_deleteExam" class="action.TeacherExamAction" method="deleteExam">		
+			<result name="success" type="redirect">teacher_exam_after</result>			
+		</action>
+		
+		
+		
+	<!-- 学生页面 -->
+		<!-- 学生主页页面 -->
+		<action name="student_main" class="action.StudentExamAction" method="studentMainPage">		
+			<result name="success">/WEB-INF/jsp/student/main.jsp</result>
+		</action>
+		
+		<!-- 学生查看提交页面 -->
+		<action name="student_summit" class="action.StudentExamAction" method="studentSummitPage">		
+			<result name="success">/WEB-INF/jsp/student/listdir.jsp</result>
+		</action>
+		
+		<!-- 学生通知 -->
+		<action name="student_notify" >
+			<result name="success">/WEB-INF/jsp/student/notify.jsp</result>
+		</action>
+		
+		<!-- 学生退出 -->
+		<action name="student_exit" class="action.StudentExamAction" method="studentExit">		
+			<result name="success" type="redirect">loginPage</result>
+		</action>
+		
+		<!-- 提交答案 -->
+		<action name="student_uploadAnswer" class="action.StudentExamAction" method="uploadAnswer">		
+			<result name="success" type="redirect">student_main</result>
+			<result name="input">/WEB-INF/jsp/student/tipsss.jsp</result>
+		</action>
+		
+		<!-- 下载试卷 -->
+		<action name="student_downloadExamPaper" class="action.StudentExamAction" method="downloadExamPaper">		
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename=${paperFileName}</param>
+				<param name="bufferSize">4096</param>
+			</result>
+		</action>
+		
+		
+
+			<!-- 图片验证码 -->
+				<action name="creatImgCode" class="action.ImgCodeAction">              
+					<result name="success" type="stream">                   
+						<param name="contentType">image/jpeg</param>                  
+						<param name="inputName">inputStream </param>             
+					</result>       
+			    </action> 
+		
+		
+		
+	
+	</package>
+
+</struts>
